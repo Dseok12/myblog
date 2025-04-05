@@ -9,7 +9,7 @@ export default function SignupPage() {
     password: '',
     email: '',
     phoneNumber: '',
-    gender: '',
+    gender: '', // 남자 or 여자
     agreedToTerms: false,
   });
 
@@ -20,34 +20,60 @@ export default function SignupPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.agreedToTerms) return alert('이용약관에 동의해주세요.');
-
     try {
       await axios.post('/api/auth/signup', form);
-      alert('회원가입 성공!');
+      alert('회원가입 완료!');
       navigate('/login');
     } catch (err) {
-      alert('회원가입 실패');
+      alert('회원가입 실패: ' + (err.response?.data?.message || err.message));
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-6 space-y-4">
-      <input name="username" placeholder="아이디" className="w-full border p-2" onChange={handleChange} />
-      <input name="password" type="password" placeholder="비밀번호" className="w-full border p-2" onChange={handleChange} />
-      <input name="email" placeholder="이메일" className="w-full border p-2" onChange={handleChange} />
-      <input name="phoneNumber" placeholder="휴대폰 번호" className="w-full border p-2" onChange={handleChange} />
-      <select name="gender" className="w-full border p-2" onChange={handleChange}>
-        <option value="">성별 선택</option>
-        <option value="MALE">남성</option>
-        <option value="FEMALE">여성</option>
-        <option value="OTHER">기타</option>
-      </select>
-      <label className="flex gap-2 items-center">
-        <input type="checkbox" name="agreedToTerms" onChange={handleChange} />
-        이용약관에 동의합니다
+    <form onSubmit={handleSubmit} className="p-6 max-w-md mx-auto">
+      <h2 className="text-xl font-bold mb-4">회원가입</h2>
+
+      {['username', 'password', 'email', 'phoneNumber'].map((field) => (
+        <input
+          key={field}
+          name={field}
+          type={field === 'password' ? 'password' : 'text'}
+          placeholder={field}
+          value={form[field]}
+          onChange={handleChange}
+          required
+          className="block w-full mb-2 p-2 border"
+        />
+      ))}
+
+      {/* ✅ 성별 선택: select 박스 */}
+      <label className="block mb-2">
+        <span className="block mb-1">성별</span>
+        <select
+          name="gender"
+          value={form.gender}
+          onChange={handleChange}
+          required
+          className="block w-full p-2 border"
+        >
+          <option value="" disabled>성별 선택</option>
+          <option value="남자">남자</option>
+          <option value="여자">여자</option>
+        </select>
       </label>
-      <button type="submit" className="w-full bg-green-500 text-white py-2 rounded">회원가입</button>
+
+      {/* ✅ 약관 동의 */}
+      <label className="block mb-4 mt-2">
+        <input
+          type="checkbox"
+          name="agreedToTerms"
+          checked={form.agreedToTerms}
+          onChange={handleChange}
+        />{' '}
+        약관 동의
+      </label>
+
+      <button className="bg-blue-500 text-white px-4 py-2 rounded">가입</button>
     </form>
   );
 }

@@ -1,63 +1,29 @@
 import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext'; // 로그인 상태를 체크하는 useAuth 사용
 
 export default function Header() {
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuth(); // user는 로그인 정보, logout은 로그아웃 함수
 
   return (
-    <header className="bg-gray-800 text-white p-4 flex justify-between items-center">
-      <Link
-        to="/"
-        className="text-xl font-bold"
-      >
-        DevBlog
-      </Link>
-      <nav className="flex gap-4 items-center">
-        {user ? (
-          <>
-            <span className="text-sm">
-              {user.username} ({user.role})
-            </span>
-
-            <Link
-              to="/mypage"
-              className="text-sm hover:underline"
-            >
-              마이페이지
-            </Link>
-
-            {user.role === 'ADMIN' && (
-              <Link
-                to="/admin"
-                className="text-sm hover:underline text-red-400"
-              >
-                관리자
-              </Link>
-            )}
-
-            <button
-              onClick={logout}
-              className="text-sm bg-red-500 hover:bg-red-600 px-3 py-1 rounded"
-            >
-              로그아웃
-            </button>
-          </>
-        ) : (
-          <>
-            <Link
-              to="/login"
-              className="hover:underline"
-            >
-              로그인
-            </Link>
-            <Link
-              to="/signup"
-              className="hover:underline"
-            >
-              회원가입
-            </Link>
-          </>
-        )}
+    <header className="bg-blue-600 text-white p-4">
+      <nav className="flex justify-between items-center">
+        <Link to="/" className="text-2xl font-bold">DevBlog</Link>
+        <ul className="flex space-x-4">
+          <li><Link to="/" className="hover:text-gray-300">홈</Link></li>
+          <li><Link to="/posts" className="hover:text-gray-300">게시글 보기</Link></li> {/* 게시글 보기 추가 */}
+          {user ? (
+            <>
+              <li><Link to="/create-post" className="hover:text-gray-300">게시글 작성</Link></li>
+              <li><Link to="/mypage" className="hover:text-gray-300">마이페이지</Link></li>
+              <li><Link to="/" className="hover:text-gray-300" onClick={logout}>로그아웃</Link></li>
+            </>
+          ) : (
+            <>
+              <li><Link to="/login" className="hover:text-gray-300">로그인</Link></li>
+              <li><Link to="/signup" className="hover:text-gray-300">회원가입</Link></li>
+            </>
+          )}
+        </ul>
       </nav>
     </header>
   );
